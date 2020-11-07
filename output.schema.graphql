@@ -1,0 +1,306 @@
+directive @embedded on OBJECT
+directive @collection(name: String!) on OBJECT
+directive @index(name: String!) on FIELD_DEFINITION
+directive @resolver(
+  name: String
+  paginated: Boolean! = false
+) on FIELD_DEFINITION
+directive @relation(name: String) on FIELD_DEFINITION
+directive @unique(index: String) on FIELD_DEFINITION
+type Account {
+  # The document's ID.
+  _id: ID!
+  # The document's timestamp.
+  _ts: Long!
+  email: String!
+  profile: Profile!
+}
+
+# 'Account' input values
+input AccountInput {
+  email: String!
+  profile: AccountProfileRelation
+}
+
+# The pagination object for elements of type 'Account'.
+type AccountPage {
+  # The elements of type 'Account' in this page.
+  data: [Account]!
+  # A cursor for elements coming after the current page.
+  after: String
+  # A cursor for elements coming before the current page.
+  before: String
+}
+
+# Allow manipulating the relationship between the types 'Account' and 'Profile' using the field 'Account.profile'.
+input AccountProfileRelation {
+  # Create a document of type 'Profile' and associate it with the current document.
+  create: ProfileInput
+  # Connect a document of type 'Profile' with the current document using its ID.
+  connect: ID
+}
+
+scalar Date
+
+# The `Long` scalar type
+ represents non-fractional signed whole numeric values.
+# Long can represent values between -(2^63) and 2^63 - 1.
+scalar Long
+
+type Mutation {
+  # Delete an existing document in the collection of 'Profile'
+  deleteProfile(
+    # The 'Profile' document's ID
+    id: ID!
+  ): Profile
+  register(email: String!, password: String!): Account!
+  # Update an existing document in the collection of 'Project'
+  updateProject(
+    # The 'Project' document's ID
+    id: ID!
+    # 'Project' input values
+    data: ProjectInput!
+  ): Project
+  # Delete an existing document in the collection of 'Skill'
+  deleteSkill(
+    # The 'Skill' document's ID
+    id: ID!
+  ): Skill
+  # Update an existing document in the collection of 'Skill'
+  updateSkill(
+    # The 'Skill' document's ID
+    id: ID!
+    # 'Skill' input values
+    data: SkillInput!
+  ): Skill
+  # Delete an existing document in the collection of 'Account'
+  deleteAccount(
+    # The 'Account' document's ID
+    id: ID!
+  ): Account
+  # Delete an existing document in the collection of 'Project'
+  deleteProject(
+    # The 'Project' document's ID
+    id: ID!
+  ): Project
+  # Update an existing document in the collection of 'Account'
+  updateAccount(
+    # The 'Account' document's ID
+    id: ID!
+    # 'Account' input values
+    data: AccountInput!
+  ): Account
+  # Create a new document in the collection of 'Skill'
+  createSkill(
+    # 'Skill' input values
+    data: SkillInput!
+  ): Skill!
+  # Create a new document in the collection of 'Project'
+  createProject(
+    # 'Project' input values
+    data: ProjectInput!
+  ): Project!
+  # Create a new document in the collection of 'Profile'
+  createProfile(
+    # 'Profile' input values
+    data: ProfileInput!
+  ): Profile!
+  # Create a new document in the collection of 'Account'
+  createAccount(
+    # 'Account' input values
+    data: AccountInput!
+  ): Account!
+  login(email: String!, password: String!): String!
+  # Update an existing document in the collection of 'Profile'
+  updateProfile(
+    # The 'Profile' document's ID
+    id: ID!
+    # 'Profile' input values
+    data: ProfileInput!
+  ): Profile
+}
+
+type Profile {
+  name: String!
+  # The document's ID.
+  _id: ID!
+  icon: String!
+  skills(
+    # The number of items to return per page.
+    _size: Int
+    # The pagination cursor.
+    _cursor: String
+  ): SkillPage!
+  projects(
+    # The number of items to return per page.
+    _size: Int
+    # The pagination cursor.
+    _cursor: String
+  ): ProjectPage!
+  # The document's timestamp.
+  _ts: Long!
+}
+
+# 'Profile' input values
+input ProfileInput {
+  name: String!
+  icon: String!
+  skills: ProfileSkillsRelation
+  projects: ProfileProjectsRelation
+}
+
+# The pagination object for elements of type 'Profile'.
+type ProfilePage {
+  # The elements of type 'Profile' in this page.
+  data: [Profile]!
+  # A cursor for elements coming after the current page.
+  after: String
+  # A cursor for elements coming before the current page.
+  before: String
+}
+
+# Allow manipulating the relationship between the types 'Profile' and 'Project'.
+input ProfileProjectsRelation {
+  # Create one or more documents of type 'Project' and associate them with the current document.
+  create: [ProjectInput]
+  # Connect one or more documents of type 'Project' with the current document using their IDs.
+  connect: [ID]
+  # Disconnect the given documents of type 'Project' from the current document using their IDs.
+  disconnect: [ID]
+}
+
+# Allow manipulating the relationship between the types 'Profile' and 'Skill'.
+input ProfileSkillsRelation {
+  # Create one or more documents of type 'Skill' and associate them with the current document.
+  create: [SkillInput]
+  # Connect one or more documents of type 'Skill' with the current document using their IDs.
+  connect: [ID]
+  # Disconnect the given documents of type 'Skill' from the current document using their IDs.
+  disconnect: [ID]
+}
+
+type Project {
+  # The document's ID.
+  _id: ID!
+  # The document's timestamp.
+  _ts: Long!
+  name: String!
+  profile(
+    # The number of items to return per page.
+    _size: Int
+    # The pagination cursor.
+    _cursor: String
+  ): ProfilePage!
+}
+
+# 'Project' input values
+input ProjectInput {
+  name: String!
+  profile: ProjectProfileRelation
+}
+
+# The pagination object for elements of type 'Project'.
+type ProjectPage {
+  # The elements of type 'Project' in this page.
+  data: [Project]!
+  # A cursor for elements coming after the current page.
+  after: String
+  # A cursor for elements coming before the current page.
+  before: String
+}
+
+# Allow manipulating the relationship between the types 'Project' and 'Profile'.
+input ProjectProfileRelation {
+  # Create one or more documents of type 'Profile' and associate them with the current document.
+  create: [ProfileInput]
+  # Connect one or more documents of type 'Profile' with the current document using their IDs.
+  connect: [ID]
+  # Disconnect the given documents of type 'Profile' from the current document using their IDs.
+  disconnect: [ID]
+}
+
+type Query {
+  # Find a document from the collection of 'Profile' by its id.
+  findProfileByID(
+    # The 'Profile' document's ID
+    id: ID!
+  ): Profile
+  getSkill(
+    # The number of items to return per page.
+    _size: Int
+    # The pagination cursor.
+    _cursor: String
+    name: String!
+  ): SkillPage!
+  # Find a document from the collection of 'Skill' by its id.
+  findSkillByID(
+    # The 'Skill' document's ID
+    id: ID!
+  ): Skill
+  accountsByEmail(
+    # The number of items to return per page.
+    _size: Int
+    # The pagination cursor.
+    _cursor: String
+    email: String!
+  ): AccountPage!
+  allProfiles(
+    # The number of items to return per page.
+    _size: Int
+    # The pagination cursor.
+    _cursor: String
+  ): ProfilePage!
+  # Find a document from the collection of 'Account' by its id.
+  findAccountByID(
+    # The 'Account' document's ID
+    id: ID!
+  ): Account
+  # Find a document from the collection of 'Project' by its id.
+  findProjectByID(
+    # The 'Project' document's ID
+    id: ID!
+  ): Project
+}
+
+type Skill {
+  # The document's ID.
+  _id: ID!
+  # The document's timestamp.
+  _ts: Long!
+  name: String!
+  profiles(
+    # The number of items to return per page.
+    _size: Int
+    # The pagination cursor.
+    _cursor: String
+  ): ProfilePage!
+}
+
+# 'Skill' input values
+input SkillInput {
+  name: String!
+  profiles: SkillProfilesRelation
+}
+
+# The pagination object for elements of type 'Skill'.
+type SkillPage {
+  # The elements of type 'Skill' in this page.
+  data: [Skill]!
+  # A cursor for elements coming after the current page.
+  after: String
+  # A cursor for elements coming before the current page.
+  before: String
+}
+
+# Allow manipulating the relationship between the types 'Skill' and 'Profile'.
+input SkillProfilesRelation {
+  # Create one or more documents of type 'Profile' and associate them with the current document.
+  create: [ProfileInput]
+  # Connect one or more documents of type 'Profile' with the current document using their IDs.
+  connect: [ID]
+  # Disconnect the given documents of type 'Profile' from the current document using their IDs.
+  disconnect: [ID]
+}
+
+scalar Time
+
